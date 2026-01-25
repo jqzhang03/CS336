@@ -1,0 +1,305 @@
+\documentclass[a4paper,10pt]{ctexart} 
+
+% ============================================================
+%   模块 A: 页面布局与基本设置
+% ============================================================
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry} % 页边距
+\usepackage{fancyhdr} % 页眉页脚控制
+\usepackage{lastpage} % 获取总页数
+\usepackage{hyperref} % 超链接与书签
+\usepackage{enumitem} % 定义列表
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% ============================================================
+%   模块 B: 数学支持
+% ============================================================
+\usepackage{amsmath, amssymb, amsthm} % 数学公式、符号、定理
+\usepackage{mathrsfs} % 花体字母 \mathscr
+
+% ============================================================
+%   模块 C: 图形与代码高亮
+% ============================================================
+\usepackage{graphicx} % 插入图片
+\usepackage{float}    % 强制图片位置 [H]
+\usepackage{listings} % 代码插入
+\usepackage{xcolor}   % 颜色支持
+\usepackage{lstautogobble}
+% 代码块样式设置
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{codeblue}{rgb}{0,0,0.6}
+\lstset{
+    backgroundcolor=\color{codegray},
+    commentstyle=\color{green!60!black},
+    keywordstyle=\color{codeblue},
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{purple},
+    basicstyle=\ttfamily\small,
+    autogobble=true,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4,
+    frame=single
+}
+
+% ============================================================
+%   模块 D: 美化框 (tcolorbox) - 核心部分
+% ============================================================
+\usepackage[most]{tcolorbox} % 强大的盒子宏包
+
+% --- 定义 1: 概念/定义框 (绿色风格) ---
+\newtcolorbox[auto counter, number within=section]{definition}[2][]{
+    colback=green!5!white,      % 背景色
+    colframe=green!40!black,    % 边框色
+    coltitle=white,             % 标题文字颜色
+    boxrule=1pt,
+    title=\textbf{定义~\thetcbcounter: #2}, % 标题格式
+    fonttitle=\bfseries,
+    breakable,                  % 允许跨页
+    enhanced,
+    attach boxed title to top left={yshift=-2mm, xshift=2mm}, % 标题位置
+    #1
+}
+
+% --- 定义 2: 定理/结论框 (蓝色风格) ---
+\newtcolorbox[auto counter, number within=section]{theorem}[2][]{
+    colback=blue!5!white,
+    colframe=blue!50!black,
+    coltitle=white,
+    boxrule=1pt,
+    title=\textbf{定理~\thetcbcounter: #2},
+    fonttitle=\bfseries,
+    breakable,
+    enhanced,
+    attach boxed title to top left={yshift=-2mm, xshift=2mm},
+    #1
+}
+
+% --- 定义 3: 注意/警告框 (红色风格) ---
+\newtcolorbox{alert}{
+    colback=red!5!white,
+    colframe=red!75!black,
+    title=\textbf{注意},
+    fonttitle=\bfseries,
+    breakable,
+    enhanced
+}
+
+\newtcolorbox{problembox}{
+    colframe=orange,        % 边框橙色
+    colback=white,          % 背景白色
+    boxrule=2pt,            % 边框粗细
+    sharp corners,          % 直角
+    breakable,              % 允许跨页
+    left=5pt, right=5pt,  % 内部左右留白
+    top=5pt, bottom=5pt   % 内部上下留白
+}
+
+% ============================================================
+%   页面头部信息设置
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textbf{课程名称：CS336}} % 左页眉
+\rhead{日期：2026年1月21日}           % 右页眉
+\cfoot{第 \thepage \ 页，共 \pageref{LastPage} 页} % 页脚
+\renewcommand{\headrulewidth}{0.4pt} % 页眉分割线
+
+% ==================== 4. 自定义题目样式命令 ====================
+% 用法: \problem{标题内容}
+\newcommand{\problem}[1]{%
+    \par\vspace{1em}
+    \noindent{\large\bfseries #1} % 大号加粗字体
+    \par\vspace{2pt}
+    \hrule height 0.8pt           % 下划线，厚度0.8pt
+    \vspace{1em}
+}
+
+% 定义 "Deliverable" 的快捷命令
+\newcommand{\deliverable}[1]{%
+    \par\vspace{3pt}
+    \noindent \textbf{Deliverable:} #1
+}
+
+
+% ============================================================
+%   文档正文开始
+% ============================================================
+\title{\textbf{Lab1}}
+\date{2026年1月21日}
+
+\begin{document}
+
+    \maketitle % 生成标题
+    \tableofcontents % 生成目录
+    \newpage % 换页
+
+    % --- 正文内容 ---
+
+    \section{基本概念}
+    \subsection{Tokenizer}
+    \subsubsection{Word-level tokenizer}
+    将每个单词定义为一个token，这样相较于Byte-level tokenizer来说，对于一个长句子，会产生更少的token，但由于需要为每个词都定义一个序号，必然会存在某些词并不在定义的字典当中，从而无法解析
+    \subsubsection{Byte-level tokenizer}
+    将每一个字符定义为一个token，其字典大小为0-255，这样可以覆盖到每一个可见的字母，但缺点是如果一个单词的长度很长，会使得token值特别大，在模型训练的时候会更浪费时间
+    \subsubsection{Subword tokenizer(BPE)}
+    结合Word-level tokenizer和Byte-level tokenizer的优点，得到了BPE这种压缩算法，即Byte-pair encoding
+
+    对于一个句子，我们的字典最初就是Byte-level tokenizer的字典，序号是0-255，然后遍历整个句子，每次将相邻的两个单词组成一个pair，然后记录该pair出现的次数，遍历完以后，将出现次数最高的pair定义为一个新的字典序号，
+    并加入到字典当中，然后将该pair看成是一个word，持续遍历整个句子，直到合并完成。直接做的缺点有每次我们都需要完整遍历语料库，计算量非常大，其次，如果是相邻的标点符号不一样，也会生成一个新的ID，尽管标点前面
+    的单词是一样的
+
+    在最初提出的BPE中，字典里存在一些\texttt{Special tokens},比如\texttt{<|endoftext|>}，其用途是告诉程序什么时候停止生成token，\texttt{special tokens}不会被分割成多个token，在该实验的BPE中不考虑special token
+
+    给定\texttt{low}、\texttt{lower}、\texttt{widest}、\texttt{newest}，根据BPE的步骤进行分词
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/FB5BC6A57B760A9C422BFD060B71D22A.jpg}
+    \end{figure}
+
+    
+
+    \section{问题部分}
+
+    \subsection{Problem unicode1}
+    \begin{problembox}
+        % --- 题目头 ---
+        \problem{Problem (unicode1): Understanding Unicode (1 point)}
+
+        % --- 列表开始 ---
+        \begin{enumerate}[label=(\alph*), leftmargin=*]
+
+            % (a)
+            \item What Unicode character does \texttt{chr(0)} return?
+            
+            \deliverable{A one-sentence response.}
+
+            % (b)
+            \item How does this character's string representation (\texttt{\_\_repr\_\_()}) differ from its printed representation?
+            
+            \deliverable{A one-sentence response.}
+
+            % (c)
+            \item What happens when this character occurs in text? It may be helpful to play around with the following in your Python interpreter and see if it matches your expectations:
+
+            % 代码块
+            \begin{lstlisting}
+                >>> chr(0)
+                >>> print(chr(0))
+                >>> "this is a test" + chr(0) + "string"
+                >>> print("this is a test" + chr(0) + "string")
+            \end{lstlisting}
+
+            \deliverable{A one-sentence response.}
+
+        \end{enumerate}
+    \end{problembox}
+    \subsubsection{Answer}
+    \begin{enumerate}[label=(\alph*), leftmargin=*]
+        \item 在终端中使用python环境进行实现 \\
+        \begin{figure}[H] % [H] 表示"Here"，强制让图片就在当前代码位置，不乱跑
+            \centering
+            % width=0.8\textwidth 表示图片宽度占页面文本宽度的 80%
+            \includegraphics[width=0.2\textwidth]{./images/QQ20260124-113852.png}
+        \end{figure}
+        \item \texttt{chr(0)}是空字符，直接在命令行输入命令或调用\texttt{\_\_repr\_\_()}时会用转义字符来表示，对于非打印字符来说直接打印是不可见的\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.3\textwidth]{images/QQ20260124-115248.png} 
+        \end{figure}
+        \item \texttt{print()}是位于用户视图，直接在交互式命令行输入命令或调用\texttt{\_\_repr\_\_()}是位于开发者视图，因此一个可见空字符，一个不可见空字符
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/QQ20260124-115550.png} 
+        \end{figure}
+    \end{enumerate}
+
+    \subsection{Problem unicode2}
+    \begin{problembox}
+        \problem{Problem (unicode2): Unicode Encodings \quad (3 points)}
+
+        \begin{enumerate}[label=(\alph*), leftmargin=*]
+
+            \item What are some reasons to prefer training our tokenizer on UTF-8 encoded bytes, rather than UTF-16 or UTF-32? It may be helpful to compare the output of these encodings for various input strings.
+
+            \deliverable{A one-to-two sentence response.}
+
+            \item Consider the following (incorrect) function, which is intended to decode a UTF-8 byte string into a Unicode string. Why is this function incorrect? Provide an example of an input byte string that yields incorrect results.
+
+            \begin{lstlisting}
+                def decode_utf8_bytes_to_str_wrong(bytestring: bytes):
+                    return "".join([bytes([b]).decode("utf-8") for b in bytestring])
+
+                >>> decode_utf8_bytes_to_str_wrong("hello".encode("utf-8"))
+                'hello'
+            \end{lstlisting}
+
+            \deliverable{An example input byte string for which \texttt{decode\_utf8\_bytes\_to\_str\_wrong} produces incorrect output, with a one-sentence explanation of why the function is incorrect.}
+
+            \item Give a two byte sequence that does not decode to any Unicode character(s).
+
+            \deliverable{An example, with a one-sentence explanation.}
+
+        \end{enumerate}
+
+    \end{problembox}
+
+    \subsubsection{Answer}
+    \begin{enumerate}[label=(\alph*), leftmargin=*]
+        \item UTF-8相较于UTF-16和UTF-32有以下几个优点：
+        \begin{itemize}
+            \item UTF-8完全兼容ASCII码，而UTF-16和UTF-32处理ASCII字符时会插入大量空字节
+            \item UTF-8是变长编码，通常是1到4个字节不等，对比UTF-16和UTF-32更节省空间
+            \item UTF-8是以单字节为单位处理的，不存在大端序和小端序转换的问题，而UTF-16和UTF-32必须处理字节序问题，否则会出现乱码
+            \item 如果文件在传输过程中丢失了一个字节或受损，UTF-8能根据后续的字节特征快速找到下一个字符的起始位置
+        \end{itemize}
+        \item 这段代码会出错，因为在函数当中处理bytestring的方式是一个字节一个字节的解码，但UTF-8是变长编码，如果输入的是多个字节组成的字符会导致\textbf{UnicodeDecodeError}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/QQ20260124-222934.png}
+            \includegraphics[width=0.8\textwidth]{images/QQ20260124-222943.png} 
+        \end{figure}
+        \item \texttt{0XC0 0XAF}，在现代解码器中任何以\texttt{0XC0}、\texttt{0XC1}开头的字节序列都会被抛出\textbf{UnicodeDecodeError}
+    \end{enumerate}
+
+
+    行内公式示例：$E = mc^2$。
+
+    \section{Latex代码模板}
+    在笔记中插入代码是非常常见的需求，特别是 CS 专业的笔记。
+
+    \begin{definition}{梯度下降}
+        梯度下降（Gradient Descent）是一种用于优化函数的迭代算法。为了找到函数的局部最小值，我们需要向当前点梯度的\textbf{反方向}迈步。
+    \end{definition}
+
+    \begin{theorem}{泰勒公式}
+        如果函数 $f(x)$ 在点 $x_0$ 处具有 $n$ 阶导数，则有：
+        \begin{equation}
+            f(x) = \sum_{n=0}^{\infty} \frac{f^{(n)}(x_0)}{n!} (x-x_0)^n
+        \end{equation}
+    \end{theorem}
+
+    \begin{lstlisting}[language=Python, caption=Python 示例代码]
+    def hello_world():
+        print("Hello, LaTeX!")
+        return True
+    \end{lstlisting}
+
+    \section{重点总结}
+
+    \begin{alert}
+        考试重点：请务必记住上述定理的适用条件，不要混淆！
+    \end{alert}
+
+\end{document}
