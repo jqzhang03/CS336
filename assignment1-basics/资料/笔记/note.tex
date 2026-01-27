@@ -168,7 +168,7 @@
         \includegraphics[width=\textwidth]{images/FB5BC6A57B760A9C422BFD060B71D22A.jpg}
     \end{figure}
 
-    
+    下面是一个\href{https://tiktokenizer.vercel.app/?encoder=gpt2}{Token count}网页，可以在网页内选择不同的模型，看相同的一个句子其生成的token的方式的不同
 
     \section{问题部分}
 
@@ -273,6 +273,19 @@
         \item \texttt{0XC0 0XAF}，在现代解码器中任何以\texttt{0XC0}、\texttt{0XC1}开头的字节序列都会被抛出\textbf{UnicodeDecodeError}
     \end{enumerate}
 
+    \subsection{Problem train\_bpe}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/QQ20260126-213522.png}
+    \end{figure}
+
+    \subsubsection{Answer}
+    根据问题内容，我们首先应该在\textbf{./tests/adapters.py}完善其\textbf{run\_train\_bpe}函数，打开文件后，我们不难发现整个函数只有一句
+    \begin{lstlisting}
+        raise NotImplementedError
+    \end{lstlisting}
+    其主要目的就是告诉我们的测试程序应该去哪里找到我们自己编写的函数，以及传入和接收的一些参数值
+    
 
     行内公式示例：$E = mc^2$。
 

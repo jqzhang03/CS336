@@ -1,12 +1,12 @@
 # Fdb version 4
-["xdvipdfmx"] 1769270659.50425 "note.xdv" "note.pdf" "note" 1769270659.74968 0
-  "note.xdv" 1769270659.47118 112316 6f52f44fd8ed40babb2035330d636e3a "xelatex"
+["xdvipdfmx"] 1769435066.06903 "note.xdv" "note.pdf" "note" 1769435066.39969 0
+  "note.xdv" 1769435066.03455 116076 520bcdd554829060dae953f5ea1371aa "xelatex"
   (generated)
   "note.pdf"
   (rewritten before read)
-["xelatex"] 1769270658.78053 "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" "note.xdv" "note" 1769270659.74819 0
+["xelatex"] 1769435065.35065 "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" "note.xdv" "note" 1769435066.39846 0
   "/System/Library/Fonts/Menlo.ttc" 1756454353 2156036 ec05dfca6821d85440da0899493002c3 ""
-  "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" 1769270658.57725 12892 181abd366a0a4819d1ed11e6a303b06d ""
+  "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" 1769435065.177 13680 14f1f86beb90aff6e5e9b010d48292a6 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -222,10 +222,11 @@
   "images/QQ20260124-115550.png" 1769226952.47192 21107 289821e77b25385cd2f5e0c7c1b71993 ""
   "images/QQ20260124-222934.png" 1769264977.1032 38134 9929bcd92b71181e4d5dbc05760b5368 ""
   "images/QQ20260124-222943.png" 1769264984.3956 9063 914e73e7a88a5983f6936e947ac2394b ""
-  "note.aux" 1769270659.47064 1820 f2b946a17838e1b1e47610755755fa2b "xelatex"
-  "note.out" 1769270659.471 1430 86dc003fe114544a817c8d5a91f14a22 "xelatex"
-  "note.tex" 1769270658.57725 12892 181abd366a0a4819d1ed11e6a303b06d ""
-  "note.toc" 1769270659.47116 970 6d7d7009bf83b5b955d855259918d241 "xelatex"
+  "images/QQ20260126-213522.png" 1769434526.03936 243127 79c1c96ca7d1b36ec6c155f1c3ad0a9e ""
+  "note.aux" 1769435066.03388 2068 138bd2c3e87408a1a7184d8adb97a9c7 "xelatex"
+  "note.out" 1769435066.03436 1677 b03067d05f06f69e4793bb7ccf0dc446 "xelatex"
+  "note.tex" 1769435065.177 13680 14f1f86beb90aff6e5e9b010d48292a6 ""
+  "note.toc" 1769435066.03452 1136 7f590db82c2b66d2e4359f219af6f7e6 "xelatex"
   (generated)
   "note.aux"
   "note.log"
