@@ -1,12 +1,12 @@
 # Fdb version 4
-["xdvipdfmx"] 1769435066.06903 "note.xdv" "note.pdf" "note" 1769435066.39969 0
-  "note.xdv" 1769435066.03455 116076 520bcdd554829060dae953f5ea1371aa "xelatex"
+["xdvipdfmx"] 1769847923.60993 "note.xdv" "note.pdf" "note" 1769847924.35474 0
+  "note.xdv" 1769847923.57513 153692 cf58b2ea6226a491c418d91f2b272f0f "xelatex"
   (generated)
   "note.pdf"
   (rewritten before read)
-["xelatex"] 1769435065.35065 "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" "note.xdv" "note" 1769435066.39846 0
+["xelatex"] 1769847922.91231 "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" "note.xdv" "note" 1769847924.35342 0
   "/System/Library/Fonts/Menlo.ttc" 1756454353 2156036 ec05dfca6821d85440da0899493002c3 ""
-  "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" 1769435065.177 13680 14f1f86beb90aff6e5e9b010d48292a6 ""
+  "/Users/zhangjinqi/Desktop/acm/learn/CS336/assignment1-basics/资料/笔记/note.tex" 1769847922.72457 16785 7e4f99d850739d8157e4171bcdb5db8b ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -223,10 +223,15 @@
   "images/QQ20260124-222934.png" 1769264977.1032 38134 9929bcd92b71181e4d5dbc05760b5368 ""
   "images/QQ20260124-222943.png" 1769264984.3956 9063 914e73e7a88a5983f6936e947ac2394b ""
   "images/QQ20260126-213522.png" 1769434526.03936 243127 79c1c96ca7d1b36ec6c155f1c3ad0a9e ""
-  "note.aux" 1769435066.03388 2068 138bd2c3e87408a1a7184d8adb97a9c7 "xelatex"
-  "note.out" 1769435066.03436 1677 b03067d05f06f69e4793bb7ccf0dc446 "xelatex"
-  "note.tex" 1769435065.177 13680 14f1f86beb90aff6e5e9b010d48292a6 ""
-  "note.toc" 1769435066.03452 1136 7f590db82c2b66d2e4359f219af6f7e6 "xelatex"
+  "images/QQ20260130-105328.png" 1769741613.8923 49789 0e8e6c35a52bf07bcc7cb95fa5bb672d ""
+  "images/QQ20260130-105428.png" 1769741670.87229 349598 7b65eafc7bad3a9aa8379cc4d8b5c1f2 ""
+  "images/QQ20260130-110300.png" 1769742182.83279 208283 0b94ad4d94fe3951da6c4e367400cc0e ""
+  "images/QQ20260131-153735.png" 1769845057.64048 129394 fe68bdbd6533718d5b95032a71b67477 ""
+  "images/QQ20260131-162403.png" 1769847845.41688 80062 da3b540c368a15f6e6a94ec91ed016ca ""
+  "note.aux" 1769847923.57443 2329 26bf96ab592a090d8dfc3c93836af742 "xelatex"
+  "note.out" 1769847923.57492 1987 8ffe238528ba2e5837c70bfa855f62f7 "xelatex"
+  "note.tex" 1769847922.72457 16785 7e4f99d850739d8157e4171bcdb5db8b ""
+  "note.toc" 1769847923.5751 1315 5e010a409fb03b2551fe1a7f8c2ede7e "xelatex"
   (generated)
   "note.aux"
   "note.log"

@@ -285,7 +285,77 @@
         raise NotImplementedError
     \end{lstlisting}
     其主要目的就是告诉我们的测试程序应该去哪里找到我们自己编写的函数，以及传入和接收的一些参数值
-    
+    \begin{lstlisting}
+        from cs336_basics.train_bpe import train_bpe
+        return train_bpe(
+            input_path = input_path,
+            vocab_size = vocab_size,
+            special_tokens = special_tokens
+        )
+    \end{lstlisting}
+    首先\textbf{./cs336\_basics/train\_bpe.py}为无任何优化的原始版本，代码中有较为详细的注释，执行以下命令测试代码，警告无需在意
+    \begin{lstlisting}
+        uv run pytest tests/test_train_bpe.py
+    \end{lstlisting}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/QQ20260131-153735.png}
+    \end{figure}
+    接下来对无任何优化的分词器根据文档中的提示进行优化，代码见\textbf{./cs336\_basics/train\_bpe\_
+    parallel.py}，详细注释见代码，
+    需要注意的是我们在并行运算的代码中需要将文本进行切块，就需要用到\textbf{./cs336
+    \_basics/pretokenization\_example.py}中的函数，我们需要先给该代码添加一个main函数，
+    否则运行时会报错
+    \begin{lstlisting}
+        ## Usage
+        if __name__ == "__main__" :
+            with open(..., "rb") as f:
+                num_processes = 4
+                boundaries = find_chunk_boundaries(f, num_processes, b"<|endoftext|>")
+    \end{lstlisting}
+    接着修改好\textbf{adapters.py}中调用的函数后，依然是执行
+    \begin{lstlisting}
+        uv run pytest tests/test_train_bpe.py
+    \end{lstlisting}
+    不难发现，速度的改变还是非常显著的
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/QQ20260131-162403.png}
+    \end{figure}
+
+    \subsection{Problem train\_bpe\_tinystories}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/QQ20260130-110300.png}
+    \end{figure}
+
+    \subsubsection{Answer}
+    \begin{itemize}
+        \item 首先利用原生的BPE分词器进行实验，即不加任何优化和多线程等方式，然后在终端利用
+        \begin{lstlisting}
+            uv run python -m cProfile -o workspace/tinystories.prof cs336_basics/train_bpe_tinystories.py
+        \end{lstlisting}
+        得到如下结果
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{images/QQ20260130-105328.png}
+        \end{figure}
+        在删减版训练集上用时24.54s，占用0.05GB内存，最长的token是' congratulations'，有前导空格
+        \item 在终端利用
+        \begin{lstlisting}
+            uv run python - <<'EOF'
+            import pstats
+            p = pstats.Stats("workspace/tinystories.prof")
+            p.sort_stats("tottime").print_stats(30)
+            EOF
+        \end{lstlisting}
+        得到如下结果
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{images/QQ20260130-105428.png}
+        \end{figure}
+        耗时最多的首先是train\_bpe，因为没有添加任何优化和多线程，意料之内，其次是dict类型查找参数耗时比较长
+    \end{itemize}
 
     行内公式示例：$E = mc^2$。
 

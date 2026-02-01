@@ -300,7 +300,7 @@ def run_transformer_lm(
         num_heads (int): Number of heads to use in multi-headed attention. `d_model` must be
             evenly divisible by `num_heads`.
         d_ff (int): Dimensionality of the feed-forward inner layer (section 3.3).
-        rope_theta (float): The RoPE $\Theta$ parameter.
+        rope_theta (float): The RoPE $\\Theta$ parameter.
         weights (dict[str, Tensor]):
             State dict of our reference implementation. {num_layers} refers to an
             integer between `0` and `num_layers - 1` (the layer index).
@@ -590,7 +590,7 @@ def run_train_bpe(
                 Merges are ordered by order of creation.
     """
 
-    from cs336_basics.train_bpe import train_bpe
+    from cs336_basics.train_bpe_parallel import train_bpe
 
     return train_bpe(
         input_path = input_path,

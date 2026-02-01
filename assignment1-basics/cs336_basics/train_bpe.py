@@ -45,7 +45,7 @@ def train_bpe(
         new_spans: list[str] = []
         for sp in spans: 
             if sp:
-                new_spans.extend(sp.split(special_token))
+             -   new_spans.extend(sp.split(special_token))
         spans = new_spans
 
     # 对于去掉special_tokens的每个小片段，将其进行预分词处理

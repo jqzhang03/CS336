@@ -10,5 +10,7 @@
 \contentsline {subsubsection}{\numberline {2.2.1}Answer}{4}{subsubsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.3}Problem train\_bpe}{5}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Answer}{5}{subsubsection.2.3.1}%
-\contentsline {section}{\numberline {3}Latex代码模板}{5}{section.3}%
-\contentsline {section}{\numberline {4}重点总结}{6}{section.4}%
+\contentsline {subsection}{\numberline {2.4}Problem train\_bpe\_tinystories}{6}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Answer}{7}{subsubsection.2.4.1}%
+\contentsline {section}{\numberline {3}Latex代码模板}{8}{section.3}%
+\contentsline {section}{\numberline {4}重点总结}{8}{section.4}%
