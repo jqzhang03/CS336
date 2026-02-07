@@ -55,21 +55,26 @@ def build_word_freq_serial(input_path: str | os.PathLike, special_tokens: list[s
     return count_word_freq_from_text(text, special_tokens)
 
 # 多进程任务需要分块
-def build_word_freq_parallel(input_path: str | os.PathLike, special_tokens: list[str], num_processes: int) -> dict[tuple[bytes, ...], int]:
+def build_word_freq_parallel(input_path: str | os.PathLike, special_tokens: list[str], num_processes: int, *, num_chunks: int | None = None) -> dict[tuple[bytes, ...], int]:
     # 如果没有special_token的话其实也是跟单进程任务一样执行
     # 因为我们是根据special_token进行划分
     if num_processes <= 1 or not special_tokens:
         return build_word_freq_serial(input_path, special_tokens)
+    
+    if num_chunks is None:
+        num_chunks = max(num_processes * 32, num_processes)
+
+    
     split_special_token = special_tokens[0].encode("utf-8")
     with open(input_path, "rb") as f:
         # find_chunk_boundaries在pretokenization_example.py中已经给出，因此不用实现
-        boundaries = find_chunk_boundaries(f, num_processes, split_special_token)
+        boundaries = find_chunk_boundaries(f, num_chunks, split_special_token)
     
     # 定义分块后的任务，开始的位置，结束的位置，spcial_token
     tasks = [(str(input_path), start, end, special_tokens) for start, end in zip(boundaries[:-1], boundaries[1:])]
     merged = Counter()
     # 为每一个子进程都定义一份自己的分词模式，避免rx在进程间反复通信
-    with Pool(processes = num_processes, initializer = get_gpt2_regex) as pool:
+    with Pool(processes = num_processes, initializer = get_gpt2_regex, maxtasksperchild = 8) as pool:
         for partial in pool.imap_unordered(process_chunk, tasks, chunksize = 1):
             merged.update(partial)
 
@@ -87,6 +92,7 @@ def pairs_in_word(word: tuple[bytes, ...]) -> dict[tuple[bytes, bytes], int]:
         prev = cur
     return counts
 
+# 将word中的a与b两相邻字节进行合并
 def apply_merge(word: tuple[bytes, ...], a: bytes, b: bytes, new_token: bytes) -> tuple[bytes, ...]:
     if len(word) < 2:
         return word
@@ -119,14 +125,18 @@ def build_pair_stats(word_freq: dict[tuple[bytes, ...], int]) -> tuple[dict[tupl
     return pair_counts, pair_to_words
 
 def remove_word_contribution(word: tuple[bytes, ...], freq: int, pair_counts: dict[tuple[bytes, bytes], int], pair_to_words: dict[tuple[bytes, bytes], set[tuple[bytes, ...]]]) -> None:
+    # local记录的是当前这个word的所有字节对
     local = pairs_in_word(word)
     for pair, occ in local.items():
         # 得到当前这个字节对都出现在哪些word里
         s = pair_to_words.get(pair)
         if s is not None:
+            # 在s这个集合内删除word
             s.discard(word)
+            # 如果s这个集合只有word，那么pair_to_word的映射在合并以后也是空集了，所以也可以删掉
             if not s:
                 del pair_to_words[pair]
+        # 删除当前word对其他字节对产生的影响
         new_c = pair_counts.get(pair, 0) - occ * freq
         if new_c <= 0:
             pair_counts.pop(pair, None)
@@ -136,14 +146,20 @@ def remove_word_contribution(word: tuple[bytes, ...], freq: int, pair_counts: di
 def add_word_contribution(word: tuple[bytes, ...], add_freq: int, pair_counts: dict[tuple[bytes, bytes], int], pair_to_words: dict[tuple[bytes, bytes], set[tuple[bytes, ...]]], *, word_is_new: bool) -> None:
     if len(word) < 2:
         return
+    # 计算新word中相邻字节以及其出现次数
     local = pairs_in_word(word)
     for p, occ in local.items():
+        # 将pair出现的频率添加到pair_counts中
         pair_counts[p] = pair_counts.get(p, 0) + occ * add_freq
+        # 如果新word是第一次添加，需要将新word插入倒排索引中，也就是能够通过pair映射到对应的word
         if word_is_new:
+            # 判断该word中当前的pair是否在倒排索引中出现
             s = pair_to_words.get(p)
             if s is None:
+                # 如果没有出现过这种pair的组合，则需要创建新节点，将word插入倒排索引
                 pair_to_words[p] = {word}
             else:
+                # 如果出现过这种pair组合，只需要将word添加到倒排索引即可
                 s.add(word)
 
 def train_bpe(
@@ -174,12 +190,14 @@ def train_bpe(
     if num_precesses <= 1 or file_size < 1000000:
         word_freq = build_word_freq_serial(input_path, special_tokens)
     else:
-        word_freq = build_word_freq_parallel(input_path, special_tokens, num_precesses)
+        word_freq = build_word_freq_parallel(input_path, special_tokens, num_precesses, num_chunks = num_precesses * 32)
     
     if not word_freq: 
         return vocab, []
 
-    # 进入循环之前先初始化，记录字节对出现的次数以及字节对出现在哪些word当中
+    # 进入循环之前先初始化，
+    # pair_counts:记录字节对出现的次数
+    # pair_to_words:记录字节对出现在哪些word当中
     pair_counts, pair_to_words = build_pair_stats(word_freq)
     merges: list[tuple[bytes, bytes]] = []
     
@@ -201,24 +219,35 @@ def train_bpe(
 
         # 对于a和b这一字节对来说，查询其影响了哪些word，我们只需要修改受影响的word即可，不需要把整个语料库进行遍历
         affected = pair_to_words.get((a, b))
+        # 如果a和b这一字节对不影响任何word，只需要把他从pair_counts中删除即可
         if not affected:
             pair_counts.pop((a, b), None)
             continue
         
         add_back: dict[tuple[bytes, ...], int] = {}
+        # 如果a和b这一字节对对某些word产生了影响，那么需要遍历受影响的word，
+        # 将a与b进行合并，删除a和b以前的贡献
         for word in list(affected):
+            # 得到某个word在整个文本当中出现的次数
             freq = word_freq.get(word)
             if freq is None:
                 continue
-
+            
+            # 删掉当前word产生的贡献
             remove_word_contribution(word, freq, pair_counts, pair_to_words)
             del word_freq[word]
 
+            # 将a与b进行合并，重新生成新的word
             new_word = apply_merge(word, a, b, new_token)
+            # 记录新word的出现频率
             add_back[new_word] = add_back.get(new_word, 0) + freq
+        
+        # 将a与b合并后的word添加到
         for new_word, add_freq in add_back.items():
+            # 判断新的word是否已经存到了word_freq当中
             existed = new_word in word_freq
             word_freq[new_word] = word_freq.get(new_word, 0) + add_freq
+            # 将新word的贡献添加到全局结构中
             add_word_contribution(new_word, add_freq, pair_counts, pair_to_words, word_is_new = not existed)
 
     return vocab, merges

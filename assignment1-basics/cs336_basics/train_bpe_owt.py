@@ -2,40 +2,33 @@ import os
 import time
 import pickle
 import psutil
-
 from cs336_basics.train_bpe_parallel import train_bpe
 
 def main():
-    input_path = "data/tinystories_sample_5M.txt"
+    input_path = "data/owt_train.txt"
     output_dir = "workspace"
     os.makedirs(output_dir, exist_ok = True)
-    vocab_size = 10000
+    
+    vocab_size = 32000
     special_tokens = ["<|endoftext|>"]
     proc = psutil.Process(os.getpid())
-    peak_rss = 0
     t0 = time.perf_counter()
-    vocab, merges = train_bpe(input_path = input_path, vocab_size = vocab_size, special_tokens = special_tokens)
+    vocab, merges = train_bpe(input_path = input_path, vocab_size = vocab_size, special_tokens = special_tokens, num_precesses = 8)
     t1 = time.perf_counter()
-    peak_rss = proc.memory_info().rss
-    vocab_path = os.path.join(output_dir, "tinystories_bpe_vocab.pkl")
-    merges_path = os.path.join(output_dir, "tinystores_bpe_merges.pkl")
+    rss_gb = proc.memory_info().rss / (1024 * 3)
+    vocab_path = os.path.join(output_dir, "owt_bpe_vocab_32000.pkl")
+    merges_path = os.path.join(output_dir, "owt_bpe_merges_32000.pkl")
     with open(vocab_path, "wb") as f:
         pickle.dump(vocab, f)
-    
     with open(merges_path, "wb") as f:
         pickle.dump(merges, f)
 
-    longest_id, longest_bytes = max(vocab.items(), key = lambda kv : len(kv[1]))
+    longest_id, longest_bytes = max(vocab.items(), key = lambda kv: len(kv[1]))
     longest_str = longest_bytes.decode("utf-8", errors = "replace")
-    elapsed_s = t1 - t0
-    elapsed_min = elapsed_s / 60.0
-    elapsed_hr = elapsed_s / 3600.0
-    mem_gb = peak_rss / (1024 ** 3)
-
     print(f"Saved vocab -> {vocab_path}")
     print(f"Saved merges -> {merges_path}")
-    print(f"Elapsed: {elapsed_s:.2f}s ({elapsed_min:.2f} min, {elapsed_hr:.4f} hr)")
-    print(f"RSS (approx): {mem_gb:.2f} GB  (install psutil for this number)")
+    print(f"Elapsed: {(t1 - t0):.2f}s")
+    print(f"RSS (approx): {rss_gb:.2f} GB")
     print(f"Longest token id={longest_id}, bytes_len={len(longest_bytes)}")
     print(f"Longest token (decoded): {repr(longest_str)}")
 

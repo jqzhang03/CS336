@@ -354,7 +354,33 @@
             \centering
             \includegraphics[width=\textwidth]{images/QQ20260130-105428.png}
         \end{figure}
-        耗时最多的首先是train\_bpe，因为没有添加任何优化和多线程，意料之内，其次是dict类型查找参数耗时比较长
+        耗时最多的首先是train\_bpe，因为没有添加任何优化和多进程，意料之内，其次是dict类型查找参数耗时比较长
+        \item 再利用包含优化以及多进程并行处理的进行实验，得到如下结果
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{images/QQ20260206-213154.png}
+        \end{figure}
+        发现耗时比较多的是合并阶段需要不断的进行pair之间大小比较
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{images/QQ20260206-213502.png}
+        \end{figure}
+    \end{itemize}
+
+    \subsection{Problem train\_bpe\_expts\_owt}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{images/QQ20260206-215048.png}
+    \end{figure}
+    \subsubsection{Answer}
+    \begin{itemize}
+        \item 最长的token是ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ，这个是可能存在的，因为OpenWebText并不会像TinyStories数据集那样都是有意义的符号，
+        在开放的互联网当中会充斥着各种字符，而且字符长度也不一样，在合并的时候可能会因为中间某些字符存在乱码，利用utf-8解码的时候容易出现乱码
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\textwidth]{images/QQ20260207-172155.png}
+        \end{figure}
+        \item Tinystories数据集文本更干净，token往往都是可读或有意义的字符，但OpenWebText会包含更多的噪声，token的可读性差
     \end{itemize}
 
     行内公式示例：$E = mc^2$。
